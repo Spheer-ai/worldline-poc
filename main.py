@@ -77,9 +77,13 @@ from ingenico.connect.sdk.domain.payment.definitions.order_references_approve_pa
 )
 
 
-client = Factory.create_client_from_file("./conf", "todo", "todo")
+CLIENT = Factory.create_client_from_file(
+    "./conf",
+    "3cdf571bae3bdec5",
+    "qCCfYEWiuSVM7orLbgcVpItFk+CBnxQ1rWV1ZnGPiCY=",
+)
 
-with client as c:
+with CLIENT as c:
     # CREATE PAYMENT
     card = Card()
     card.card_number = "4567350000427977"
@@ -247,7 +251,7 @@ with client as c:
     body.order = order
 
     try:
-        create_payment_response = client.merchant("1196").payments().create(body)
+        create_payment_response = CLIENT.merchant("1196").payments().create(body)
         pass
     except DeclinedPaymentException as e:
         print(e)
@@ -263,7 +267,7 @@ with client as c:
     body.alias = "Some alias"
 
     token_response = (
-        client.merchant("1196")
+        CLIENT.merchant("1196")
         .payments()
         .tokenize(create_payment_response.payment.id, body)
     )
@@ -290,7 +294,7 @@ with client as c:
     body.order = order
 
     response = (
-        client.merchant("1196").payments()
+        CLIENT.merchant("1196").payments()
         # .approve(token_response.original_payment_id, body)
         .approve(create_payment_response.payment.id, body)
     )
