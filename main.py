@@ -35,11 +35,11 @@ with CLIENT as c:
         card_number="4567350000427977",
         cvv="456",
         expiry_date="1225",
-        currency="EUR",
-        amount=2980,
+        currency="USD",
+        amount=2200,
         payment_product_id=1,
     )
-    body.order = get_order("EUR")
+    body.order = get_order(currency="USD", amount=2200)
 
     try:
         create_payment_response = CLIENT.merchant(MERCHANT_ID).payments().create(body)

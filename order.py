@@ -36,9 +36,9 @@ from ingenico.connect.sdk.domain.payment.definitions.shipping import Shipping
 from ingenico.connect.sdk.domain.payment.definitions.shopping_cart import ShoppingCart
 
 
-def get_order(currency: str):
+def get_order(currency: str, amount: int):
     amount_of_money = AmountOfMoney()
-    amount_of_money.amount = 2980
+    amount_of_money.amount = amount
     amount_of_money.currency_code = currency
 
     billing_address = Address()
@@ -127,13 +127,13 @@ def get_order(currency: str):
     items = []
 
     item1_amount_of_money = AmountOfMoney()
-    item1_amount_of_money.amount = 2500
+    item1_amount_of_money.amount = amount // 2
     item1_amount_of_money.currency_code = currency
 
     item1_invoice_data = LineItemInvoiceData()
     item1_invoice_data.description = "ACME Super Outfit"
     item1_invoice_data.nr_of_items = "1"
-    item1_invoice_data.price_per_item = 2500
+    item1_invoice_data.price_per_item = amount // 2
 
     item1 = LineItem()
     item1.amount_of_money = item1_amount_of_money
@@ -142,13 +142,13 @@ def get_order(currency: str):
     items.append(item1)
 
     item2_amount_of_money = AmountOfMoney()
-    item2_amount_of_money.amount = 480
+    item2_amount_of_money.amount = amount - (amount // 2)
     item2_amount_of_money.currency_code = currency
 
     item2_invoice_data = LineItemInvoiceData()
     item2_invoice_data.description = "Aspirin"
-    item2_invoice_data.nr_of_items = "12"
-    item2_invoice_data.price_per_item = 40
+    item2_invoice_data.nr_of_items = "1"
+    item2_invoice_data.price_per_item = amount - (amount // 2)
 
     item2 = LineItem()
     item2.amount_of_money = item2_amount_of_money
