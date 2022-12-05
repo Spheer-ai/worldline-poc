@@ -27,6 +27,7 @@ CLIENT = Factory.create_client_from_file(
     "qCCfYEWiuSVM7orLbgcVpItFk+CBnxQ1rWV1ZnGPiCY=",
 )
 MERCHANT_ID = "1196"
+AMOUNT = 2200
 
 with CLIENT as c:
     # CREATE PAYMENT
@@ -36,14 +37,13 @@ with CLIENT as c:
         cvv="456",
         expiry_date="1225",
         currency="USD",
-        amount=2200,
+        amount=AMOUNT,
         payment_product_id=1,
     )
     body.order = get_order(currency="USD", amount=2200)
 
     try:
         create_payment_response = CLIENT.merchant(MERCHANT_ID).payments().create(body)
-        print(create_payment_response)
     except DeclinedPaymentException as e:
         print(e)
     except ApiException as e:
@@ -62,7 +62,6 @@ with CLIENT as c:
         .payments()
         .tokenize(create_payment_response.payment.id, body)
     )
-    print(token_response)
 
     # APPROVE PAYMENT
     direct_debit_payment_method_specific_input = (
@@ -78,11 +77,24 @@ with CLIENT as c:
     order.references = references
 
     body = ApprovePaymentRequest()
-    body.amount = 2980
+    body.amount = AMOUNT
     body.direct_debit_payment_method_specific_input = (
         direct_debit_payment_method_specific_input
     )
     body.order = order
+
+    # DELETE TOKEN
+    # Delete the token from the original payment in token_response to make a new
+    # token next time you run this script. Apparently you can't approve a payment
+    # with its token if an earlier payment used the same CC. I have no idea why
+    # this is supposedly logical. Sounds illogical to me.
+    #
+    # from ingenico.connect.sdk.merchant.tokens.delete_token_params import (
+    #     DeleteTokenParams,
+    # )
+    # CLIENT.merchant(MERCHANT_ID).tokens().delete(
+    #     "9ae31db5-069c-4efc-95d9-77552d0eda37", DeleteTokenParams()
+    # )
 
     response = (
         CLIENT.merchant(MERCHANT_ID).payments()
